@@ -1,7 +1,59 @@
 ---
-title: "Homework 3"
+title: "Regression HW2"
 author: "Wen Dai"
 date: '`r format(Sys.time(), "%Y-%m-%d")`'
 output: github_document
 ---
+
+1) Type the data into R as a data frame.
+```{r}
+data=data.frame(
+  time=c(1.5,3.5,4.5,4.5,5.5,6.5,8.5,8.5,8.5,11.5),
+  status=c(1,0,1,0,1,0,1,0,1,1))
+head(data)
+
+library(survival)
+fit=survfit(Surv(time,status)~1,data=data,conf.type="log-log")
+
+summary(fit)
+
+
+```
+
+2)Plot the Kaplan-Meier Survival Curve
+```{r}
+library(ggsurvfit)
+library(ggplot2)
+survfit2(Surv(time,status)~1,data=data,
+             conf.type="log-log") |> 
+          ggsurvfit()+
+          add_risktable()+
+          add_confidence_interval()+
+          add_quantile()+
+          add_censor_mark()
+  
+```
+
+3) Quartiles and 95%CI
+```{r}
+quantile(fit, probs=c(0.25,0.5,0.75),conf.int = TRUE)
+```
+
+4) Calculate the mean survival time
+```{r}
+print(fit,rmean="common")
+```
+
+Let ˆμ2 be the mean survival time estimate if all the censored observations were events. 
+
+```{r}
+data=data.frame(
+  time=c(1.5,3.5,4.5,4.5,5.5,6.5,8.5,8.5,8.5,11.5),
+  status=c(1,1,1,1,1,1,1,1,1,1))
+
+library(survival)
+fit2=survfit2(Surv(time,status)~1,data=data,conf.type="log-log")
+
+print(fit2,rmean="common")
+```
 
